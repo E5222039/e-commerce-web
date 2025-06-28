@@ -2,13 +2,16 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const path = require('path');
+require('dotenv').config();
+
 const User = require('./models/User');
+const Cart = require('./models/Cart');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-// ✅ MongoDB Connection (ONLY ONCE)
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -28,55 +31,47 @@ app.use(session({
     saveUninitialized: false
 }));
 
-// ✅ Dummy Product List (you can later move to MongoDB)
+// ✅ Dummy Product List
 const products = [
     { name: "Product 1", price: 10, image: "https://via.placeholder.com/200" },
     { name: "Product 2", price: 20, image: "https://via.placeholder.com/200" }
 ];
 
-// ✅ In-memory cart per session
-const userCarts = {};
-
-// ✅ API: Get Products
+// ✅ Get Products
 app.get('/api/products', (req, res) => {
     res.json(products);
 });
 
-// ✅ API: Add to Cart
-app.post('/api/cart', (req, res) => {
-    if (!req.session.user) return res.status(401).json({ message: "Not logged in" });
+// ✅ Save Cart to MongoDB
+app.post('/api/cart', async(req, res) => {
+    if (!req.session.userId) return res.status(401).json({ message: "Not logged in" });
 
-    const username = req.session.user;
-    const { name, price } = req.body;
-    if (!userCarts[username]) userCarts[username] = [];
-
-    const cart = userCarts[username];
-    const existing = cart.find(item => item.name === name);
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({ name, price, quantity: 1 });
+    const { items } = req.body;
+    try {
+        // Remove existing cart and create new
+        await Cart.findOneAndDelete({ userId: req.session.userId });
+        const cart = new Cart({ userId: req.session.userId, items });
+        await cart.save();
+        res.json({ success: true, cart });
+    } catch (err) {
+        console.error("Cart save error:", err);
+        res.status(500).json({ success: false, message: "Failed to save cart" });
     }
-
-    res.json({ success: true });
 });
 
-// ✅ API: Get Cart
-app.get('/api/cart', (req, res) => {
-    const username = req.session.user;
-    const cart = username ? userCarts[username] || [] : [];
-    res.json({ items: cart });
+// ✅ Get Cart from MongoDB
+app.get('/api/cart', async(req, res) => {
+    if (!req.session.userId) return res.status(401).json({ message: "Not logged in" });
+
+    try {
+        const cart = await Cart.findOne({ userId: req.session.userId });
+        res.json({ items: cart ? cart.items : [] });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Failed to get cart" });
+    }
 });
 
-// ✅ API: Remove from Cart
-app.delete('/api/cart/remove/:index', (req, res) => {
-    const username = req.session.user;
-    const cart = userCarts[username] || [];
-    cart.splice(req.params.index, 1);
-    res.json({ success: true });
-});
-
-// ✅ API: Register
+// ✅ Register
 app.post('/api/register', async(req, res) => {
     const { username, password } = req.body;
     try {
@@ -86,14 +81,14 @@ app.post('/api/register', async(req, res) => {
         const hash = await bcrypt.hash(password, 10);
         const user = new User({ username, password: hash });
         await user.save();
-
+        req.session.userId = user._id;
         res.json({ success: true });
     } catch (err) {
         res.json({ success: false, message: "Error registering user" });
     }
 });
 
-// ✅ API: Login
+// ✅ Login
 app.post('/api/login', async(req, res) => {
     const { username, password } = req.body;
     try {
@@ -103,23 +98,23 @@ app.post('/api/login', async(req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.json({ success: false, message: "Incorrect password" });
 
-        req.session.user = username;
+        req.session.userId = user._id;
         res.json({ success: true });
     } catch (err) {
         res.json({ success: false, message: "Login error" });
     }
 });
 
-// ✅ API: Logout
+// ✅ Logout
 app.post('/api/logout', (req, res) => {
     req.session.destroy();
     res.json({ success: true });
 });
 
-// ✅ API: Get Logged-in User
+// ✅ Get Logged-in User
 app.get('/api/user', (req, res) => {
-    if (req.session.user) {
-        res.json({ loggedIn: true, username: req.session.user });
+    if (req.session.userId) {
+        res.json({ loggedIn: true });
     } else {
         res.json({ loggedIn: false });
     }
