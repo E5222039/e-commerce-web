@@ -6,7 +6,8 @@ const path = require('path');
 require('dotenv').config();
 
 const User = require('./models/User');
-const cart = require('./models/cart');
+const Cart = require('./models/Cart');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -41,6 +42,34 @@ const products = [
 app.get('/api/products', (req, res) => {
     res.json(products);
 });
+app.post('/api/cart/add', async (req, res) => {
+  if (!req.session.user) return res.status(401).json({ error: 'Not logged in' });
+
+  const { productId, name, price } = req.body;
+
+  try {
+    let cart = await Cart.findOne({ userId: req.session.user._id });
+
+    if (!cart) {
+      cart = new Cart({ userId: req.session.user._id, items: [] });
+    }
+
+    const existingItem = cart.items.find(item => item.name === name);
+
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.items.push({ productId, name, price, quantity: 1 });
+    }
+
+    await cart.save();
+    res.json({ message: 'Added to cart' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 // ✅ Save Cart to MongoDB
 app.post('/api/cart', async(req, res) => {
@@ -70,6 +99,28 @@ app.get('/api/cart', async(req, res) => {
         res.status(500).json({ success: false, message: "Failed to get cart" });
     }
 });
+app.get('/api/cart', async (req, res) => {
+  if (!req.session.user) return res.json({ items: [] });
+
+  const cart = await Cart.findOne({ userId: req.session.user._id });
+  res.json({ items: cart?.items || [] });
+});
+app.delete('/api/cart/remove/:index', async (req, res) => {
+  if (!req.session.user) return res.status(401).json({ error: 'Not logged in' });
+
+  const index = parseInt(req.params.index);
+  const cart = await Cart.findOne({ userId: req.session.user._id });
+
+  if (!cart || index < 0 || index >= cart.items.length) {
+    return res.status(400).json({ error: 'Invalid index' });
+  }
+
+  cart.items.splice(index, 1);
+  await cart.save();
+
+  res.json({ message: 'Item removed' });
+});
+
 
 // ✅ Register
 app.post('/api/register', async(req, res) => {
