@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // ✅ MongoDB Connection (ONLY ONCE)
-mongoose.connect('mongodb://127.0.0.1:27017/ecommerce', {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
