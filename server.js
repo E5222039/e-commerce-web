@@ -103,5 +103,19 @@ app.get('/api/user', async (req, res) => {
 app.post('/api/logout', (req, res) => {
   req.session.destroy(() => res.json({ success: true }));
 });
+app.get('/api/cart/admin-view', async (req, res) => {
+  try {
+    const carts = await Cart.find().populate('userId', 'username'); // 👈 join with User
+    const result = carts.map(cart => ({
+      username: cart.userId.username,
+      items: cart.items
+    }));
+    res.json(result);
+  } catch (err) {
+    console.error('Error fetching carts with username:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 app.listen(port, () => console.log(`🚀 Server: http://localhost:${port}`));
