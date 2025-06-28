@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 const User = require('./models/User');
-const Cart = require('./models/Cart');
+const cart = require('./models/cart');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -49,7 +49,7 @@ app.post('/api/cart', async(req, res) => {
     const { items } = req.body;
     try {
         // Remove existing cart and create new
-        await Cart.findOneAndDelete({ userId: req.session.userId });
+        await cart.findOneAndDelete({ userId: req.session.userId });
         const cart = new Cart({ userId: req.session.userId, items });
         await cart.save();
         res.json({ success: true, cart });
