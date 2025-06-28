@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MyShop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>MyShop</h1>
+        <a href="cart.html" id="cart">🛒 Cart (0)</a>
+
+    </header>
+
+    <div id="user-info">
+        <!-- Login/Register or Username/Logout will go here -->
+    </div>
+    <div id="user-info"></div>
+
+
+    <main id="product-grid"></main>
+
+    <script src="script.js">
+        fetch('/api/current-user')
+            .then(res => res.json())
+            .then(data => {
+                if (data.username) {
+                    document.getElementById('user-info').textContent = 'Welcome, ' + data.username;
+                }
+            });
+    </script>
+</body>
+
+</html>
