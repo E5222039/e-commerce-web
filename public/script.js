@@ -1,68 +1,68 @@
-// Load all products on page
 async function loadProducts() {
-    try {
-        const res = await fetch('/api/products');
-        const products = await res.json();
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
 
-        const grid = document.getElementById('product-grid');
-        grid.innerHTML = ''; // clear before re-render
-
-        products.forEach((p, index) => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <img src="${p.image}" alt="${p.name}" width="100%">
-                <h2>${p.name}</h2>
-                <p>$${p.price}</p>
-                <button onclick="addToCart(${index})">Add to Cart</button>
-            `;
-            grid.appendChild(card);
-        });
-
-    } catch (err) {
-        console.error('Error loading products:', err);
-    }
+  products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" />
+      <h2>${p.name}</h2>
+      <p>$${p.price}</p>
+      <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+    `;
+    grid.appendChild(card);
+  });
 }
 
-// Add product to cart using index from product list
-async function addToCart(index) {
-    try {
-        const res = await fetch('/api/products');
-        const products = await res.json();
-        const product = products[index];
+async function addToCart(name, price) {
+  const res = await fetch('/api/cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, price })
+  });
 
-        const addRes = await fetch('/api/cart/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                productId: index,
-                name: product.name,
-                price: product.price
-            })
-        });
+  if (res.status === 401) {
+    alert("Login first");
+    window.location.href = "login.html";
+    return;
+  }
 
-        if (addRes.status === 401) {
-            alert("Please login to add items to your cart.");
-            return;
-        }
-
-        const result = await addRes.json();
-        alert(result.message || "Added to cart!");
-
-        updateCartCount();
-    } catch (err) {
-        console.error('Error adding to cart:', err);
-    }
+  updateCartCount();
 }
 
-// Update cart count in header
 async function updateCartCount() {
-    try {
-        const res = await fetch('/api/cart');
-        if (res.status !== 200) return;
+  const res = await fetch('/api/cart');
+  const data = await res.json();
+  const count = data.items.reduce((sum, i) => sum + i.quantity, 0);
+  document.getElementById('cart').innerText = `🛒 Cart (${count})`;
+}
 
-        const data = await res.json();
-        const totalQty = data.items.reduce((sum, item) => sum + item.quantity, 0);
-        document.getElementById('cart').innerText = `🛒 Cart (${totalQty})`;
-    } catch (err) {
-        console.error('Error updating c
+async function checkLoginStatus() {
+  const res = await fetch('/api/user');
+  const data = await res.json();
+  const div = document.getElementById('user-info');
+
+  if (data.loggedIn) {
+    div.innerHTML = `
+      <span>Welcome, ${data.username}</span>
+      <button onclick="logout()">Logout</button>
+    `;
+  } else {
+    div.innerHTML = `
+      <a href="login.html">Login</a> |
+      <a href="register.html">Register</a>
+    `;
+  }
+}
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  location.reload();
+}
+
+loadProducts();
+updateCartCount();
+checkLoginStatus();
