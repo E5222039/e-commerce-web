@@ -7,12 +7,22 @@ async function loadProducts() {
   products.forEach(p => {
     const card = document.createElement('div');
     card.className = 'product-card';
+<<<<<<< HEAD
     card.innerHTML = `
   <img src="${p.image}" alt="${p.name}" class="product-img" />
   <h2>${p.name}</h2>
+=======
+ 
+      card.innerHTML = `
+  <a href="product.html?id=${p.productId}">
+    <img src="${p.image}" alt="${p.name}" />
+    <h2>${p.name}</h2>
+  </a>
+>>>>>>> 401dbb4 (Updated project with latest local changes)
   <p>₹${p.price}</p>
   <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
 `;
+
 
     grid.appendChild(card);
   });
@@ -58,6 +68,7 @@ async function checkLoginStatus() {
     `;
   }
 }
+
 
 async function logout() {
   await fetch('/api/logout', { method: 'POST' });
