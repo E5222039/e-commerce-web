@@ -27,7 +27,7 @@ async function loadCart() {
         container.appendChild(div);
     });
 
-    totalElement.innerText = `Total: $${total}`;
+    totalElement.innerText = `Total: ₹${total}`;
 }
 
 async function removeItem(index) {
