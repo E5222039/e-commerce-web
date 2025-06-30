@@ -8,11 +8,12 @@ async function loadProducts() {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" />
-      <h2>${p.name}</h2>
-      <p>$${p.price}</p>
-      <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-    `;
+  <img src="${p.image}" alt="${p.name}" class="product-img" />
+  <h2>${p.name}</h2>
+  <p>$${p.price}</p>
+  <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+`;
+
     grid.appendChild(card);
   });
 }

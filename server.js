@@ -27,8 +27,9 @@ app.use(session({
 }));
 
 const products = [
-  { productId: "1", name: "Product 1", price: 10, image: "https://via.placeholder.com/200" },
-  { productId: "2", name: "Product 2", price: 20, image: "https://via.placeholder.com/200" }
+  { productId: "1", name: "beetroot malt", price: 1000, image: "/images/beet.webp" },
+  { productId: "2", name: "Honey", price: 700, image: "/images/honey.jpg" },
+  { productId: "3", name: "Gulkanth", price: 600, image: "/images/Gulkand.jpg" },
 ];
 
 app.get('/api/products', (req, res) => {

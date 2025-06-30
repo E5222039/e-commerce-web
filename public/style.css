@@ -4,13 +4,25 @@ body {
     padding: 0;
 }
 
+
 header {
-    background: #333;
+    background: #00f683;
     color: white;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
+}
+.title-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+#title {
+  margin: 0;
+  text-align: center;
 }
 
 #product-grid {
@@ -18,12 +30,16 @@ header {
     gap: 20px;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     padding: 20px;
+    
 }
 
 .product-card {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: center;
+    
+
+    
 }
 
 
@@ -69,6 +85,14 @@ header {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
 
 #user-info button:hover {
     background-color: #c82333;
