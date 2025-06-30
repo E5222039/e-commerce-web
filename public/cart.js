@@ -21,7 +21,7 @@ async function loadCart() {
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
-        <p>${item.name} - $${item.price} × ${item.quantity}</p>
+        <p>${item.name} - ₹${item.price} × ${item.quantity}</p>
         <button onclick="removeItem(${index})">Remove</button>
       `;
         container.appendChild(div);
