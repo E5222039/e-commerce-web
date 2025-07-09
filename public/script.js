@@ -4,46 +4,23 @@ async function loadProducts() {
   const grid = document.getElementById('product-grid');
   grid.innerHTML = '';
 
-<<<<<<< HEAD
-products.forEach(p => {
-  const imageSrc = Array.isArray(p.image) ? p.image[0] : p.image;
-=======
   products.forEach(p => {
+    const imageSrc = Array.isArray(p.image) ? p.image[0] : p.image;
+
     const card = document.createElement('div');
     card.className = 'product-card';
- 
-      card.innerHTML = `
-  <img src="${p.image}" alt="${p.name}" class="product-img" />
-  <h2>${p.name}</h2>
-  <p>₹${p.price}</p>
-  <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-`;
-      card.innerHTML = `
-  <a href="product.html?id=${p.productId}">
-    <img src="${p.image}" alt="${p.name}" />
-    <h2>${p.name}</h2>
-  </a>
-  <p>₹${p.price}</p>
-  <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-`;
->>>>>>> b0ad0ba0ea6559b679f154778f0f172175ee1e3f
+    card.innerHTML = `
+      <a href="product.html?id=${p.productId}">
+        <img src="${imageSrc}" alt="${p.name}" class="product-img" />
+        <h2>${p.name}</h2>
+      </a>
+      <p>₹${p.price}</p>
+      <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+    `;
 
-  const card = document.createElement('div');
-  card.className = 'product-card';
-  card.innerHTML = `
-    <a href="product.html?id=${p.productId}">
-      <img src="${imageSrc}" alt="${p.name}" class="product-img" />
-      <h2>${p.name}</h2>
-    </a>
-    <p>₹${p.price}</p>
-    <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-  `;
-
-  grid.appendChild(card);
-});
-
+    grid.appendChild(card);
+  });
 }
-
 
 async function addToCart(name, price) {
   const res = await fetch('/api/cart', {
@@ -64,7 +41,7 @@ async function addToCart(name, price) {
 async function updateCartCount() {
   const res = await fetch('/api/cart');
   const data = await res.json();
-  const count = data.items.reduce((sum, i) => sum + i.quantity, 0);
+  const count = data.items.reduce((sum, i) => sum + (i.quantity || 1), 0); // default 1 if quantity missing
   document.getElementById('cart').innerText = `🛒 Cart (${count})`;
 }
 
@@ -75,7 +52,7 @@ async function checkLoginStatus() {
 
   if (data.loggedIn) {
     div.innerHTML = `
-      <span>Welcome, ${data.username}</span>
+      <span>Welcome, ${data.username || 'User'}</span>
       <button onclick="logout()">Logout</button>
     `;
   } else {
@@ -85,7 +62,6 @@ async function checkLoginStatus() {
     `;
   }
 }
-
 
 async function logout() {
   await fetch('/api/logout', { method: 'POST' });
