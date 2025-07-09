@@ -4,8 +4,29 @@ async function loadProducts() {
   const grid = document.getElementById('product-grid');
   grid.innerHTML = '';
 
+<<<<<<< HEAD
 products.forEach(p => {
   const imageSrc = Array.isArray(p.image) ? p.image[0] : p.image;
+=======
+  products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+ 
+      card.innerHTML = `
+  <img src="${p.image}" alt="${p.name}" class="product-img" />
+  <h2>${p.name}</h2>
+  <p>₹${p.price}</p>
+  <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+`;
+      card.innerHTML = `
+  <a href="product.html?id=${p.productId}">
+    <img src="${p.image}" alt="${p.name}" />
+    <h2>${p.name}</h2>
+  </a>
+  <p>₹${p.price}</p>
+  <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+`;
+>>>>>>> b0ad0ba0ea6559b679f154778f0f172175ee1e3f
 
   const card = document.createElement('div');
   card.className = 'product-card';
