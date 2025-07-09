@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/organic_shop', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log("✅ MongoDB connected"))
