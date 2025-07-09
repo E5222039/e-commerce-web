@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Category Products</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.product-card:hover {
+  transform: scale(1.05);
+}
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+.product-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    padding: 20px;
+    
+}
+</style>
+</head>
+<body>
+  <header>
+    <h1 id="category-title">Category</h1>
+    <a href="cart.html" id="cart">🛒 Cart</a>
+  </header>
+
+  <main id="product-list" class="product-grid"></main>
+
+  <script src="category.js"></script>
+</body>
+</html>

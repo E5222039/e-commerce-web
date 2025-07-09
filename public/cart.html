@@ -1,22 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>My Cart</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>My Cart</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <header>
-        <h1>My Cart</h1>
-        <a href="index.html">← Back to Shop</a>
-    </header>
+  <header>
+    <h1>My Cart</h1>
+    <a href="index.html">← Back to Shop</a>
+  </header>
 
-    <main id="cart-items"></main>
-    <h2 id="total">Total: $0</h2>
+  <main id="cart-items"></main>
+  <h2 id="total">Total: ₹0</h2>
+  <button id="payButton">Place Order</button>
 
-    <script src="cart.js"></script>
+  <script>
+    // ✅ Ensure user is logged in
+    (async function ensureLoggedIn() {
+      const res = await fetch('/api/user');
+      const data = await res.json();
+      if (!data.loggedIn) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+      }
+    })();
+
+    async function loadCart() {
+      const res = await fetch("/api/cart");
+      const data = await res.json();
+      const items = data.items || [];
+
+      const cartContainer = document.getElementById("cart-items");
+      const totalDisplay = document.getElementById("total");
+      cartContainer.innerHTML = "";
+      let total = 0;
+
+      items.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.innerHTML = `
+          <p>${item.name} - ₹${item.price} x ${item.quantity}</p>
+          <button onclick="removeItem(${index})">Remove</button>
+        `;
+        cartContainer.appendChild(itemDiv);
+        total += item.price * item.quantity;
+      });
+
+      totalDisplay.textContent = "Total: ₹" + total;
+    }
+
+    async function removeItem(index) {
+      await fetch(`/api/cart/remove/${index}`, { method: "DELETE" });
+      loadCart();
+    }
+
+    // ✅ Place Order / Fake Payment
+    document.getElementById("payButton").addEventListener("click", async () => {
+      try {
+        const cartRes = await fetch("/api/cart");
+        const cartData = await cartRes.json();
+
+        if (!cartData.items || cartData.items.length === 0) {
+          alert("Your cart is empty.");
+          return;
+        }
+
+        const total = cartData.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+        const res = await fetch("/api/fake-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: total })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert("✅ Order placed successfully!");
+          loadCart(); // Refresh cart after placing order
+        } else {
+          alert("❌ " + data.message);
+        }
+      } catch (err) {
+        alert("❌ Error placing order");
+        console.error(err);
+      }
+    });
+
+    loadCart();
+  </script>
 </body>
-
 </html>

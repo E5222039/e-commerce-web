@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile & Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .user-details, .cart-container {
+      background: #fff;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+    }
+
+    .user-details p, .cart-item {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .cart-item {
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 10px;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    #total {
+      font-weight: bold;
+      font-size: 18px;
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background: #e63946;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #d62828;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome, User</h1>
+
+  <div class="user-details" id="user-details">
+    <h2>Your Profile</h2>
+    <p>Loading...</p>
+  </div>
+
+  <div class="cart-container" id="cart-container">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p id="total">Total: ₹0</p>
+  </div>
+
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    async function fetchUserDetails() {
+      const res = await fetch('/api/user');
+      const data = await res.json();
+
+      const userBox = document.getElementById('user-details');
+      if (!data.loggedIn) {
+        userBox.innerHTML = '<p>You are not logged in.</p>';
+        return;
+      }
+
+      const userRes = await fetch(`/api/user-details`);
+      const user = await userRes.json();
+
+      userBox.innerHTML = `
+        <h2>Your Profile</h2>
+        <p><strong>Email:</strong> ${user.email}</p>
+        <p><strong>Username:</strong> ${user.username}</p>
+        <p><strong>Mobile:</strong> ${user.mobile}</p>
+        <p><strong>Address:</strong> ${user.address}</p>
+        <p><strong>Pincode:</strong> ${user.pincode}</p>
+      `;
+    }
+
+    async function fetchCart() {
+      const res = await fetch('/api/cart');
+      const data = await res.json();
+      const items = data.items;
+
+      const container = document.getElementById('cart-items');
+      const totalEl = document.getElementById('total');
+
+      if (items.length === 0) {
+        container.innerHTML = '<p>Your cart is empty.</p>';
+        totalEl.innerText = 'Total: ₹0';
+        return;
+      }
+
+      let total = 0;
+      container.innerHTML = '';
+      items.forEach(item => {
+        total += item.price * item.quantity;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `<p>${item.name} - ₹${item.price} × ${item.quantity}</p>`;
+        container.appendChild(div);
+      });
+
+      totalEl.innerText = `Total: ₹${total}`;
+    }
+
+    function logout() {
+      fetch('/api/logout', { method: 'POST' })
+        .then(() => window.location.href = 'login.html');
+    }
+
+    fetchUserDetails();
+    fetchCart();
+  </script>
+</body>
+</html>

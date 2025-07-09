@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { display: block; margin: 10px 0; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Fake Payment Gateway</h2>
+  <form id="paymentForm">
+    <input type="text" name="card" placeholder="Card Number" required />
+    <input type="text" name="name" placeholder="Cardholder Name" required />
+    <input type="number" name="amount" placeholder="Amount (₹)" required />
+    <button type="submit">Pay</button>
+  </form>
+
+  <script>
+    document.getElementById("paymentForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch("/api/fake-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        alert("✅ Payment Successful!");
+        window.location.href = "success.html";
+      } else {
+        alert("❌ Payment Failed.");
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Login</title>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css"> <!-- Assuming you place CSS in style.css -->
 </head>
 
 <body>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <button type="submit">Login</button>
-    </form>
-    <p><a href="register.html">Don't have an account? Register</a></p>
+  <h1>Login</h1>
 
-    <script src="auth.js"></script>
+  <div class="form-container">
+    <form id="loginForm">
+      <input type="email" name="email" placeholder="email" required><br>
+      <input type="password" name="password" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
+
+    <p><a href="register.html">Don't have an account? Register</a></p>
+  </div>
+
+  <script src="auth.js"></script>
 </body>
 
 </html>

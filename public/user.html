@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .profile, .cart {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    .profile p, .cart-item {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .cart-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    #total {
+      font-weight: bold;
+      font-size: 18px;
+      text-align: right;
+      margin-top: 15px;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #d9363e;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>User Profile</h1>
+
+  <div class="profile" id="profile">
+    <p>Loading user info...</p>
+  </div>
+
+  <div class="cart" id="cart">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p id="total">Total: ₹0</p>
+  </div>
+
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    async function loadUser() {
+      const res = await fetch('/api/user-details');
+      if (res.status === 401) {
+        document.getElementById('profile').innerHTML = '<p>You are not logged in.</p>';
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById('profile').innerHTML = `
+        <h2>Hello, ${data.username}</h2>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Mobile:</strong> ${data.mobile}</p>
+        <p><strong>Address:</strong> ${data.address}</p>
+        <p><strong>Pincode:</strong> ${data.pincode}</p>
+      `;
+    }
+
+    async function loadCart() {
+      const res = await fetch('/api/cart');
+      const data = await res.json();
+      const items = data.items;
+      const container = document.getElementById('cart-items');
+      const totalElement = document.getElementById('total');
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p>Your cart is empty.</p>';
+        totalElement.textContent = 'Total: ₹0';
+        return;
+      }
+
+      container.innerHTML = '';
+      let total = 0;
+
+      items.forEach(item => {
+        total += item.price * item.quantity;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `${item.name} - ₹${item.price} × ${item.quantity}`;
+        container.appendChild(div);
+      });
+
+      totalElement.textContent = `Total: ₹${total}`;
+    }
+
+    function logout() {
+      fetch('/api/logout', { method: 'POST' })
+        .then(() => window.location.href = 'login.html');
+    }
+
+    loadUser();
+    loadCart();
+  </script>
+
+</body>
+</html>

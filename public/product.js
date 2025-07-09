@@ -11,14 +11,52 @@ async function loadProduct() {
     return;
   }
 
+  const imageList = Array.isArray(product.image) ? product.image : [product.image];
   const div = document.getElementById('product-detail');
+
+  const benefitsHTML = product.benefits?.length
+    ? `
+      <div class="benefits">
+        <h3>Benefits</h3>
+        <ul>
+          ${product.benefits.map(b => `<li>${b}</li>`).join('')}
+        </ul>
+      </div>
+    `
+    : '';
+
   div.innerHTML = `
-    <img src="${product.image}" alt="${product.name}" width="200" />
-    <h2>${product.name}</h2>
-    <p>Price: ₹${product.price}</p>
-    <p>Description: ${product.description || "No description available."}</p>
-    <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+    <div class="image-gallery">
+      <div class="main-image">
+        <img id="main-img" src="${imageList[0]}" alt="${product.name}" />
+      </div>
+      <div class="thumbnails">
+        ${imageList.map((img, i) => `
+          <img src="${img}" class="${i === 0 ? 'active' : ''}" data-index="${i}" />
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="product-info">
+      <h2>${product.name}</h2>
+      <p class="price">₹${product.price}</p>
+      <p>Description: ${product.description || "No description available."}</p>
+
+      ${benefitsHTML}
+
+      <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+    </div>
   `;
+
+  // ✅ Thumbnail switching
+  document.querySelectorAll(".thumbnails img").forEach(img => {
+    img.addEventListener("click", function () {
+      const index = this.dataset.index;
+      document.getElementById("main-img").src = imageList[index];
+      document.querySelectorAll(".thumbnails img").forEach(i => i.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
 }
 
 async function addToCart(name, price) {
@@ -29,7 +67,7 @@ async function addToCart(name, price) {
   });
 
   if (res.status === 401) {
-    alert("Login first");
+    alert("Please login first.");
     window.location.href = "login.html";
     return;
   }

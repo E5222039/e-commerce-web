@@ -6,12 +6,13 @@ body {
 
 
 header {
-    background: #00f683;
+    background: #00b37a;
     color: white;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height:70px;
     
 }
 .title-wrapper {
@@ -40,6 +41,18 @@ header {
     
 
     
+}
+.product-card button{
+     background-color: #00b37a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+.product-card button:hover{
+    background-color: #218838;
 }
 
 
@@ -105,3 +118,47 @@ header {
 .product-card a:hover {
   text-decoration: underline; /* Optional: underline on hover for effect */
 }
+/* Navigation Bar */
+nav {
+    background-color: #333;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-left a,
+.nav-right a {
+    color: #fff;
+    text-decoration:wavy;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+    text-decoration: underline;
+}
+.nav-product a {
+    color: #fff;
+    text-decoration:wavy;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+
+#cart {
+    background-color: #fff;
+    color: #00b35a;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#cart:hover {
+    background-color: #f0f0f0;
+}
+
+

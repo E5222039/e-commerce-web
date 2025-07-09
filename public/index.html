@@ -6,12 +6,33 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+   <nav>
+    <div class="nav-left">
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart</a>
+      <a href="user.html">Profile</a>
+      <a href="aboutus.html">About us</a>
+    </div>
+    <div class="nav-right" id="user-info">
+      <!-- Login/Register or Welcome will be injected here -->
+    </div>
+  </nav>
   <header>
     <div class="title-wrapper">
     <h1 id="title">Organic Food Products</h1>
   </div>
     <a href="cart.html" id="cart">🛒 Cart (0)</a>
   </header>
+  <nav>
+  <div class="nav-product">
+    <a href="category.html?category=malt">Malt Powders</a>
+    <a href="category.html?category=sweetener">Natural Sweeteners</a>
+    <a href="category.html?category=rice">Traditional Rice</a>
+    <a href="category.html?category=soap">Soap</a>
+  </div>
+</nav>
+
+
 
   <div id="user-info"></div>
   <main id="product-grid"></main>
