@@ -140,7 +140,7 @@ Prepared using age-old methods without artificial preservatives, palm sugar is i
 
     "💆 Suitable for All Skin Types: Even sensitive and baby-soft skin",]
   },
-   { productId: "11", name: "Bio-enzyme", price: 80, image: ["/images/bioenzyme.jpg"], category: "soap", description:`Indulge in the pure essence of tropical wellness with our Coconut Oil Soap. Handcrafted with cold-pressed coconut oil and other natural ingredients, it gently cleanses while deeply nourishing your skin. The rich lather pampers you with moisturizing goodness, leaving your skin feeling soft, refreshed, and delicately scented.`,benefits:["🥥 Deep Hydration: Coconut oil penetrates deeply for long-lasting moisture",
+   { productId: "11", name: "Bio-enzyme", price: 80, image: ["/images/bioenzyme.webp"], category: "soap", description:`Indulge in the pure essence of tropical wellness with our Coconut Oil Soap. Handcrafted with cold-pressed coconut oil and other natural ingredients, it gently cleanses while deeply nourishing your skin. The rich lather pampers you with moisturizing goodness, leaving your skin feeling soft, refreshed, and delicately scented.`,benefits:["🥥 Deep Hydration: Coconut oil penetrates deeply for long-lasting moisture",
 
 "🌿 Gentle & Natural: Free from harsh chemicals and synthetic additives",
 
